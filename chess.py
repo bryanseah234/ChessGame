@@ -195,9 +195,9 @@ class Board:
             print("== UPDATE ==")
         self.remove(end)
         self.move(start, end)
-        self.checkmate()
         self.win()
         self.promotion()
+        self.checkmate()
 
     def win(self):
         if self.debug == True:
@@ -244,20 +244,21 @@ class Board:
         self.check = None
         if self.debug == True:
             print(" == CHECKING CHECKMATE ==")
-        for coord in self.coords():
-            if "white king" in str(self.get_piece(coord)):
-                wkingcoord = coord
-            elif "black king" in str(self.get_piece(coord)):
-                bkingcoord = coord
-        for coord in self.coords():
-            if self.valid_move(coord, wkingcoord):
-                print("white is checkmated!")
-                self.check = True
-                break
-            elif self.valid_move(coord, bkingcoord):
-                print("black is checkmated!")
-                self.check = True
-                break
+        if self.winner == None:
+            for coord in self.coords():
+                if "white king" in str(self.get_piece(coord)):
+                    wkingcoord = coord
+                elif "black king" in str(self.get_piece(coord)):
+                    bkingcoord = coord
+            for coord in self.coords():
+                if self.valid_move(coord, wkingcoord):
+                    print("white is checkmated!")
+                    self.check = True
+                    break
+                elif self.valid_move(coord, bkingcoord):
+                    print("black is checkmated!")
+                    self.check = True
+                    break
 
     def next_turn(self):
         """Hand the turn over to the other player."""

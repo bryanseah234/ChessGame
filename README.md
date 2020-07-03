@@ -2,7 +2,7 @@
 
 A repository for a chess game in Python (Assignment 12).
 
-
+private branch -> not accounted for this repo
 
 ## Grading rubrics
 
