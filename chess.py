@@ -163,7 +163,7 @@ class Board:
             return False
         elif end_piece is not None and end_piece.colour == self.turn:
             return False
-        elif not start_piece.isvalid(start, end):
+        elif not start_piece.isvalid(start, end, self):
             return False
         return True
 
@@ -223,7 +223,7 @@ class King(BasePiece):
     def __repr__(self):
         return f"King('{self.name}')"
 
-    def isvalid(self, start: tuple, end: tuple):
+    def isvalid(self, start: tuple, end: tuple, board):
         '''
         King can move one step in any direction
         horizontally, vertically, or diagonally.
@@ -238,7 +238,7 @@ class Queen(BasePiece):
     def __repr__(self):
         return f"Queen('{self.name}')"
 
-    def isvalid(self, start: tuple, end: tuple):
+    def isvalid(self, start: tuple, end: tuple, board):
         '''
         Queen can move any number of steps horizontally,
         vertically, or diagonally.
@@ -255,10 +255,25 @@ class Bishop(BasePiece):
     def __repr__(self):
         return f"Bishop('{self.name}')"
 
-    def isvalid(self, start: tuple, end: tuple):
+    def isvalid(self, start: tuple, end: tuple, board):
         '''Bishop can move any number of steps diagonally.'''
         x, y, dist = self.vector(start, end)
-        return (abs(x) == abs(y) != 0)
+        if (abs(x) == abs(y) != 0):
+            temp_y = start[1]
+            temp_x = start[0]
+            new = (temp_x,temp_y)
+            while new != end:
+                if y > 0 :
+                    temp_y += 1
+                else :
+                    temp_y -= 1
+                if x > 0:
+                    temp_x += 1
+                else :
+                    temp_x -= 1
+                new = (temp_x,temp_y)
+                if board.get_piece(new) != None:
+                    return False
 
 
 class Knight(BasePiece):
@@ -267,7 +282,7 @@ class Knight(BasePiece):
     def __repr__(self):
         return f"Knight('{self.name}')"
 
-    def isvalid(self, start: tuple, end: tuple):
+    def isvalid(self, start: tuple, end: tuple, board):
         '''
         Knight moves 2 spaces in any direction, and
         1 space perpendicular to that direction, in an L-shape.
@@ -282,14 +297,43 @@ class Rook(BasePiece):
     def __repr__(self):
         return f"Rook('{self.name}')"
 
-    def isvalid(self, start: tuple, end: tuple):
+    def isvalid(self, start: tuple, end: tuple, board):
         '''
         Rook can move any number of steps horizontally
         or vertically.
         '''
         x, y, dist = self.vector(start, end)
-        return (abs(x) == 0 and abs(y) != 0) \
-            or (abs(y) == 0 and abs(x) != 0) 
+        if (abs(x) == 0 and abs(y) != 0):
+            temp = start[1]
+            new = (start[0], temp)
+            if y > 0:
+                while new != end:
+                    temp = temp + 1
+                    new = (start[0], temp)
+                    if board.get_piece(new) != None:
+                        return False
+            else:
+                while new != end:
+                    temp = temp - 1
+                    new = (start[0], temp)
+                    if board.get_piece(new) != None:
+                        return False
+        elif (abs(y) == 0 and abs(x) != 0):
+            temp = start[0]
+            new = (temp, start[1])
+            if x > 0:
+                while new != end:
+                    temp = temp + 1
+                    new = (temp, start[1])
+                    if board.get_piece(new) != None:
+                        return False
+            else:
+                while new != end:
+                    temp = temp - 1
+                    new = (temp, start[1])
+                    if board.get_piece(new) != None:
+                        return False
+        return True
 
 
 class Pawn(BasePiece):
@@ -298,7 +342,7 @@ class Pawn(BasePiece):
     def __repr__(self):
         return f"Pawn('{self.name}')"
 
-    def isvalid(self, start: tuple, end: tuple):
+    def isvalid(self, start: tuple, end: tuple, board):
         '''Pawn can only move 1 step forward.'''
         x, y, dist = self.vector(start, end)
         if x == 0:
